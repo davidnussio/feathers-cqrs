@@ -1,0 +1,10 @@
+{
+  "aggregateId": "fskfj",
+  "aggregateName": "news",
+  "type": "createNews",
+  "payload": {
+    "title": "new title",
+    "userId": "user-id",
+    "text": "News content"
+  }
+}

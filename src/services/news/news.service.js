@@ -21,16 +21,16 @@ module.exports = function(app) {
 
   service.hooks(hooks);
 
-  app.on("NEWS_CREATED", event => {
-    logger.debug("read model news", event);
+  app.on("NEWS_CREATE", event => {
+    logger.info("read model news: ", event);
 
     ({
       NEWS_CREATED: () => {
-        logger.debug("save event");
+        logger.info("save event");
         service.create({ ...event.payload, _id: event.aggregateId });
       },
       UPVOTE: () => {
-        logger.debug("save event");
+        logger.info("save event");
         service.create({ ...event.payload, _id: event.aggregateId });
       }
     }[event.type]());

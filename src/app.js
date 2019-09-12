@@ -14,6 +14,7 @@ const middleware = require("./middleware");
 const services = require("./services");
 const appHooks = require("./app.hooks");
 const channels = require("./channels");
+const cqrs = require("./cqrs");
 
 const app = express(feathers());
 
@@ -33,6 +34,7 @@ app.use("/", express.static(app.get("public")));
 app.configure(express.rest());
 app.configure(socketio());
 
+app.configure(cqrs);
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
 // Set up our services (see `services/index.js`)

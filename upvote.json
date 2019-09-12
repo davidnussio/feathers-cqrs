@@ -1,0 +1,8 @@
+{
+  "aggregateId": "fskfj",
+  "aggregateName": "news",
+  "type": "upvoteNews",
+  "payload": {
+    "userId": "user-id-2"
+  }
+}

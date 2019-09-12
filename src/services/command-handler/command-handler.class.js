@@ -4,34 +4,21 @@ const { Conflict } = require("@feathersjs/errors");
 const logger = require("../../logger");
 
 exports.CommandHandler = class CommandHandler {
-  constructor(options) {
+  constructor(options, app) {
     this.options = options || {};
-  }
-
-  setup(app) {
     this.app = app;
+    this.executeCommand = options.executeCommand;
   }
 
-  async create(data, params) {
-    const command = {
-      aggregateId: data.id,
-      aggregateName: "news",
-      type: "createNews",
-      payload: {
-        title: data.title,
-        userId: "user-id",
-        text: "News content"
-      }
-    };
-
+  async create(command, params) {
+    logger.info("Create command");
     try {
-      const event = await this.options.execute(command);
-      // console.log('saved event', event);
+      const event = await this.executeCommand(command);
       this.app.emit(event.type, event);
+      return event;
     } catch (err) {
       logger.debug(err.message);
       throw new Conflict(err.message);
     }
-    return data;
   }
 };

@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-const { Conflict } = require('@feathersjs/errors');
+const { Conflict } = require("@feathersjs/errors");
+
+const logger = require("../../logger");
 
 exports.CommandHandler = class CommandHandler {
   constructor(options) {
@@ -13,21 +15,21 @@ exports.CommandHandler = class CommandHandler {
   async create(data, params) {
     const command = {
       aggregateId: data.id,
-      aggregateName: 'news',
-      type: 'createNews',
+      aggregateName: "news",
+      type: "createNews",
       payload: {
         title: data.title,
-        userId: 'user-id',
-        text: 'News content'
+        userId: "user-id",
+        text: "News content"
       }
     };
 
     try {
       const event = await this.options.execute(command);
-      console.log('saved event', event);
+      // console.log('saved event', event);
       this.app.emit(event.type, event);
     } catch (err) {
-      console.log(err.message);
+      logger.debug(err.message);
       throw new Conflict(err.message);
     }
     return data;

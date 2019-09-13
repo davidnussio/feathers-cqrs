@@ -45,6 +45,7 @@
     "resolve-es": "^0.20.25",
     "resolve-storage-lite": "^0.20.25",
     "serve-favicon": "^2.5.0",
+    "uuid": "^3.3.3",
     "winston": "^3.2.1"
   },
   "devDependencies": {
@@ -54,6 +55,7 @@
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.0",
+    "fakerator": "^0.3.0",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
     "lint-staged": "^9.2.5",

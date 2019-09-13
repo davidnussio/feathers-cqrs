@@ -21,18 +21,21 @@ module.exports = function(app) {
 
   service.hooks(hooks);
 
-  app.on("NEWS_CREATE", event => {
-    logger.info("read model news: ", event);
+  const projection = {
+    NEWS_CREATED: event => {
+      logger.info("save event NEWS_CREATED");
+      service.create({ ...event.payload, _id: event.aggregateId });
+    },
+    NEWS_UPVOTED: event => {
+      logger.info("save event NEWS_UPVOTED");
+      service.patch(event.aggregateId, { ...event.payload });
+    }
+  };
 
-    ({
-      NEWS_CREATED: () => {
-        logger.info("save event");
-        service.create({ ...event.payload, _id: event.aggregateId });
-      },
-      UPVOTE: () => {
-        logger.info("save event");
-        service.create({ ...event.payload, _id: event.aggregateId });
-      }
-    }[event.type]());
+  Object.keys(projection).forEach(eventName => {
+    app.on(eventName, projection[eventName]);
   });
+  // app.on("NEWS_UPVOTED", event => {
+  //   console.log("NEWS_UPVOTED", event, "saved");
+  // });
 };

@@ -11,7 +11,6 @@ exports.CommandHandler = class CommandHandler {
   }
 
   async create(command, params) {
-    logger.info("Create command");
     try {
       const event = await this.executeCommand(command);
       this.app.emit(event.type, event);

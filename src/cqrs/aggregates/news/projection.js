@@ -1,6 +1,8 @@
+const { CREATED, UPVOTED, COMMENT_CREATED } = require("./event_types");
+
 module.exports = {
   Init: () => ({}),
-  NEWS_CREATED: (state, { payload: { userId } }) => ({
+  [CREATED]: (state, { payload: { userId } }) => ({
     ...state,
     createdAt: Date.now(),
     createdBy: userId,
@@ -8,7 +10,7 @@ module.exports = {
     comments: {}
   }),
 
-  NEWS_UPVOTED: (state, { payload: { userId } }) => ({
+  [UPVOTED]: (state, { payload: { userId } }) => ({
     ...state,
     voted: [...state.voted, userId]
   }),
@@ -18,13 +20,18 @@ module.exports = {
   //     voted.filter(curUserId => curUserId !== userId)
   //   ),
 
-  COMMENT_CREATED: (state, { payload: { commentId, userId, comment } }) => ({
+  [COMMENT_CREATED]: (
+    state,
+    { payload: { commentId, createdBy, createdAt, comment } }
+  ) => ({
     ...state,
     comments: {
-      commentId,
-      createdAt: Date.now(),
-      createdBy: userId,
-      comment
+      ...state.comments,
+      [commentId]: {
+        createdAt,
+        createdBy,
+        comment
+      }
     }
   })
 

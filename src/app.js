@@ -34,9 +34,10 @@ app.use("/", express.static(app.get("public")));
 app.configure(express.rest());
 app.configure(socketio());
 
-app.configure(cqrs);
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
+// Configure cqrs
+app.configure(cqrs);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Set up event channels (see channels.js)

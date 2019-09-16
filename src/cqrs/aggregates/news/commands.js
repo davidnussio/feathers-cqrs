@@ -1,3 +1,5 @@
+const { CREATED, UPVOTED, COMMENT_CREATED } = require("./event_types");
+
 module.exports = {
   createNews: (
     state,
@@ -16,7 +18,7 @@ module.exports = {
     }
 
     return {
-      type: "NEWS_CREATED",
+      type: CREATED,
       payload: {
         title,
         text,
@@ -41,7 +43,7 @@ module.exports = {
     }
 
     return {
-      type: "NEWS_UPVOTED",
+      type: UPVOTED,
       payload: {
         userId
       }
@@ -94,11 +96,12 @@ module.exports = {
     }
 
     return {
-      type: "COMMENT_CREATED",
+      type: COMMENT_CREATED,
       payload: {
         commentId,
         comment,
-        userId
+        createdAt: Date.now(),
+        createdBy: userId
       }
     };
   },

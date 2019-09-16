@@ -1,5 +1,8 @@
 module.exports = {
-  createNews: (state, { payload: { title, link, userId, text } }) => {
+  createNews: (
+    state,
+    { payload: { title, link = "", userId, text, voted = [] } }
+  ) => {
     if (state.createdAt) {
       throw new Error("Aggregate already exists");
     }
@@ -18,7 +21,8 @@ module.exports = {
         title,
         text,
         link,
-        userId
+        userId,
+        voted
       }
     };
   },
@@ -76,20 +80,13 @@ module.exports = {
     };
   },
 
-  createComment: (
-    state,
-    { payload: { text, parentId, userId, commentId } }
-  ) => {
+  createComment: (state, { payload: { comment, userId, commentId } }) => {
     if (!state.createdAt || state.removedAt) {
       throw new Error("Aggregate is not exist");
     }
 
-    if (!text) {
-      throw new Error("Text is required");
-    }
-
-    if (!parentId) {
-      throw new Error("ParentId is required");
+    if (!comment) {
+      throw new Error("Comment text is required");
     }
 
     if (!userId) {
@@ -99,10 +96,9 @@ module.exports = {
     return {
       type: "COMMENT_CREATED",
       payload: {
-        text,
-        parentId,
-        userId,
-        commentId
+        commentId,
+        comment,
+        userId
       }
     };
   },

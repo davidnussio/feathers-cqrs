@@ -23,12 +23,18 @@ module.exports = function(app) {
 
   const projection = {
     NEWS_CREATED: event => {
-      logger.info("save event NEWS_CREATED");
+      logger.info("save event NEWS_CREATED", event);
       service.create({ ...event.payload, _id: event.aggregateId });
     },
-    NEWS_UPVOTED: event => {
-      logger.info("save event NEWS_UPVOTED");
-      service.patch(event.aggregateId, { ...event.payload });
+    NEWS_UPVOTED: async event => {
+      logger.info("save event NEWS_UPVOTED", event);
+      const view = await service.get(event.aggregateId);
+      logger.info("view", view);
+
+      await service.patch(event.aggregateId, {
+        ...view,
+        voted: [...view.voted, event.payload.userId]
+      });
     }
   };
 

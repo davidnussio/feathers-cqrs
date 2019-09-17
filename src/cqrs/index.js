@@ -25,6 +25,7 @@ module.exports = function(app) {
     aggregates
   });
 
+  app.set("eventStore", eventStore);
   app.set("executeCommand", execute);
   app.configure(viewsService);
 };

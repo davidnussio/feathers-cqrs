@@ -15,11 +15,6 @@ module.exports = {
     voted: [...state.voted, userId]
   }),
 
-  // NEWS_UNVOTED: (state, { payload: { userId } }) =>
-  //   state.update("voted", voted =>
-  //     voted.filter(curUserId => curUserId !== userId)
-  //   ),
-
   [COMMENT_CREATED]: (
     state,
     { payload: { commentId, createdBy, createdAt, comment } }

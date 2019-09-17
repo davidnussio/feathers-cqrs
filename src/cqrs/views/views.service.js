@@ -5,7 +5,7 @@ const hooks = require("./views.hooks");
 const logger = require("../../logger");
 
 const newsViewModel = require("./news");
-const newsUpperCaseViewModel = require("./newsUpperCase");
+const newsUpperCaseViewModel = require("./newsStats");
 
 module.exports = function(app) {
   const viewModels = [newsViewModel, newsUpperCaseViewModel];

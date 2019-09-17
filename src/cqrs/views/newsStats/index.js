@@ -2,8 +2,8 @@ const logger = require("../../../logger");
 const { eventTypes: eventNews } = require("../../aggregates/news");
 
 module.exports = {
-  name: "news-upper-case",
-  route: "/news-upper-case",
+  name: "news-stats",
+  route: "/news-stats",
   projection: service => ({
     [eventNews.CREATED]: event => {
       logger.info("save event NEWS_CREATED", event);

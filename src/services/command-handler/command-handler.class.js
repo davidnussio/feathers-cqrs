@@ -13,7 +13,7 @@ exports.CommandHandler = class CommandHandler {
   async create(command, params) {
     try {
       const event = await this.executeCommand(command);
-      this.app.emit(event.type, event);
+      // this.app.emit(event.type, event);
       return event;
     } catch (err) {
       logger.debug(err.message);

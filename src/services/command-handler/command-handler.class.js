@@ -10,11 +10,9 @@ exports.CommandHandler = class CommandHandler {
     this.executeCommand = options.executeCommand;
   }
 
-  async create(command, params) {
+  async create(command) {
     try {
-      const event = await this.executeCommand(command);
-      // this.app.emit(event.type, event);
-      return event;
+      return await this.executeCommand(command);
     } catch (err) {
       logger.debug(err.message);
       throw new Conflict(err.message);

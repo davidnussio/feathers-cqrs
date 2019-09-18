@@ -3,7 +3,10 @@ const logger = require("../../logger");
 async function run(eventStore, eventFilter, projection) {
   let state = projection.Init();
 
+  logger.info("Loading events...");
+
   const eventHandler = async event => {
+    logger.info("→ event", event.type);
     state = await projection[event.type](state, event);
   };
 

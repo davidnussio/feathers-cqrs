@@ -24,7 +24,7 @@ const userId1 = "e32e4231-31d1-4be3-9546-6a65d8006092";
 // const userId2 = "5f1c21d0-631c-4cdb-9ab4-d545b7f6000f";
 
 (async () => {
-  for (let a = 0; a < 1; a++) {
+  for (let a = 0; a < rand(2); a++) {
     const aggregateId = uuid().toString();
     // eslint-disable-next-line no-await-in-loop
     await axios.post(getUrl("command-handler"), {
@@ -48,7 +48,7 @@ const userId1 = "e32e4231-31d1-4be3-9546-6a65d8006092";
         }
       });
     }
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < rand(100); i++) {
       // eslint-disable-next-line no-await-in-loop
       await axios.post(getUrl("command-handler"), {
         aggregateId,

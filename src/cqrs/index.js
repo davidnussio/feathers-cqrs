@@ -18,7 +18,7 @@ module.exports = function(app) {
   };
 
   const eventStore = createEventStore({
-    storage: createEsStorage("./data/event-store.sqlite"),
+    storage: createEsStorage({ databaseFile: "./data/event-store.sqlite" }),
     publishEvent: publishEvent(app)
   });
   const execute = commandHandler({

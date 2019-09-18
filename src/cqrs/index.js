@@ -6,6 +6,7 @@ const logger = require("../logger");
 
 // the news-aggregate.js file is placed below
 const newsAggregate = require("./aggregates/news");
+const readModelService = require("./readModel/readModel.service");
 const viewsService = require("./views/views.service");
 
 module.exports = function(app) {
@@ -27,5 +28,7 @@ module.exports = function(app) {
 
   app.set("eventStore", eventStore);
   app.set("executeCommand", execute);
+
   app.configure(viewsService);
+  app.configure(readModelService);
 };

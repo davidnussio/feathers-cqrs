@@ -1,14 +1,20 @@
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 // Initializes the `news` service on path `/news`
+// const fs = require("fs");
 const { Views } = require("./views.class");
 const createModel = require("../../models/news.model");
 const hooks = require("./views.hooks");
 const logger = require("../../logger");
 
-const newsViewModel = require("./news");
-const newsUpperCaseViewModel = require("./newsStats");
+// const newsViewModel = require("./news");
+// const newsUpperCaseViewModel = require("./newsStats");
 
 module.exports = function(app) {
-  const viewModels = [newsViewModel, newsUpperCaseViewModel];
+  const viewModels = ["news", "newsStats", "newsList"].map(file => {
+    return require(`./${file}`);
+  });
+  // [newsViewModel, newsUpperCaseViewModel];
 
   viewModels.forEach(({ name, route, projection: createProjection }) => {
     logger.info(`Configure view model: ${name}`);

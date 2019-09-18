@@ -15,6 +15,7 @@ const getUrl = pathname =>
     pathname
   });
 
+console.log(getUrl("command-handler-url"));
 const rand = max => Math.ceil(Math.random() * max);
 
 // const aggregateId = uuid();

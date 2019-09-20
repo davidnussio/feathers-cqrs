@@ -1,17 +1,18 @@
 const logger = require("../../logger");
 
 async function run(eventStore, eventFilter, projection) {
+  let eventCount = 0;
   let state = projection.Init();
 
-  logger.info("Loading events...");
-
   const eventHandler = async event => {
-    logger.info("→ event", event.type);
+    logger.debug("→ event", event.type);
     state = await projection[event.type](state, event);
+    eventCount++;
   };
 
   await eventStore.loadEvents(eventFilter, eventHandler);
 
+  logger.info("Loaded %d", eventCount);
   return state;
 }
 

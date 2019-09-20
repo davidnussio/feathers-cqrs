@@ -6,13 +6,12 @@ module.exports = {
   route: "/news",
   projection: service => ({
     [eventNews.CREATED]: event => {
-      logger.info("save event NEWS_CREATED", event);
+      logger.info("save event NEWS_CREATED", event.type);
       service.create({ ...event.payload, _id: event.aggregateId });
     },
     [eventNews.UPVOTED]: async event => {
-      logger.info("save event NEWS_UPVOTED", event);
+      logger.info("save event NEWS_UPVOTED", event.type);
       const view = await service.get(event.aggregateId);
-      logger.info("view", view);
 
       await service.patch(event.aggregateId, {
         ...view,
@@ -20,9 +19,8 @@ module.exports = {
       });
     },
     [eventNews.COMMENT_CREATED]: async event => {
-      logger.info("save event COMMENT_CREATE", event);
+      logger.info("save event COMMENT_CREATE", event.type);
       const view = await service.get(event.aggregateId);
-      logger.info("view", view);
 
       await service.patch(event.aggregateId, {
         ...view,

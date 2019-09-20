@@ -8,6 +8,7 @@ const logger = require("../logger");
 const newsAggregate = require("./aggregates/news");
 const readModelService = require("./readModel/readModel.service");
 const viewsService = require("./views/views.service");
+const commandHandlerService = require("./command-handler/command-handler.service");
 
 module.exports = function(app) {
   const aggregates = [newsAggregate];
@@ -29,6 +30,7 @@ module.exports = function(app) {
   app.set("eventStore", eventStore);
   app.set("executeCommand", execute);
 
+  app.configure(commandHandlerService);
   app.configure(viewsService);
   app.configure(readModelService);
 };

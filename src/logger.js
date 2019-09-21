@@ -1,3 +1,3 @@
-const logger = require("pino")();
+const logger = require("pino")({ level: "info" });
 
 module.exports = logger;

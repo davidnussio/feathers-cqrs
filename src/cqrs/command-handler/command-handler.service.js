@@ -7,8 +7,6 @@ module.exports = function(app) {
 
   const options = {
     executeCommand
-    // execute
-    // eventStore
   };
 
   // Initialize our service with any options it requires

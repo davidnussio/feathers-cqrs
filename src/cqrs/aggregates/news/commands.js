@@ -1,25 +1,25 @@
-const { CREATED, UPVOTED, COMMENT_CREATED } = require("./event_types");
+const validate = require("../validation");
+const { CREATED, DELETED, UPVOTED, COMMENT_CREATED } = require("./event_types");
 
 module.exports = {
-  createNews: (
-    state,
-    { payload: { title, link = "", userId, text, voted = [] } }
-  ) => {
-    if (state.createdAt) {
-      throw new Error("Aggregate already exists");
-    }
+  createNews: (state, command) => {
+    validate(state, { createdAt: { type: "forbidden" } });
+    validate(command, {
+      payload: {
+        type: "object",
+        props: {
+          title: { type: "string" },
+          userId: { type: "string" }
+        }
+      }
+    });
 
-    if (!title) {
-      throw new Error("Title is required");
-    }
-
-    if (!userId) {
-      throw new Error("UserId is required");
-    }
+    const { title, userId, text, link = "", voted = [] } = command.payload;
 
     return {
       type: CREATED,
       payload: {
+        __metadata: { version: "1.4.2-mafia" }, // TODO metadata idea
         title,
         text,
         link,
@@ -29,18 +29,51 @@ module.exports = {
     };
   },
 
-  upvoteNews: (state, { payload: { userId } }) => {
-    if (!state.createdAt || state.removedAt) {
-      throw new Error("Aggregate is not exist");
-    }
+  deleteNews: state => {
+    validate(state, {
+      createdAt: {
+        type: "any",
+        messages: { required: "Aggregate is not exist" }
+      }
+    });
+    validate(state, {
+      removedAt: {
+        type: "forbidden",
+        messages: { forbidden: "Aggregate is already deleted" }
+      }
+    });
 
-    if (state.voted.includes(userId)) {
-      throw new Error("User already voted");
-    }
+    return {
+      type: DELETED,
+      payload: {
+        removedAt: Date.now()
+      }
+    };
+  },
 
-    if (!userId) {
-      throw new Error("UserId is required");
-    }
+  upvoteNews: (state, command) => {
+    validate(state, {
+      createdAt: {
+        type: "any",
+        messages: { required: "Aggregate is not exist" }
+      }
+    });
+    validate(state, {
+      removedAt: {
+        type: "forbidden",
+        messages: { forbidden: "Aggregate is already deleted" }
+      }
+    });
+    validate(command, {
+      payload: {
+        type: "object",
+        props: {
+          userId: { type: "any" }
+        }
+      }
+    });
+
+    const { userId } = command.payload;
 
     return {
       type: UPVOTED,
@@ -50,50 +83,33 @@ module.exports = {
     };
   },
 
-  unvoteNews: (state, { payload: { userId } }) => {
-    if (!state.createdAt || state.removedAt) {
-      throw new Error("Aggregate is not exist");
-    }
+  unvoteNews: () => {
+    throw new Error("Not implemented");
+  },
 
-    if (!state.voted.includes(userId)) {
-      throw new Error("User has not voted");
-    }
-
-    if (!userId) {
-      throw new Error("UserId is required");
-    }
-
-    return {
-      type: "NEWS_UNVOTED",
-      payload: {
-        userId
+  createComment: (state, command) => {
+    validate(state, {
+      createdAt: {
+        type: "any",
+        messages: { required: "Aggregate is not exist" }
       }
-    };
-  },
+    });
+    validate(state, {
+      removedAt: {
+        type: "forbidden",
+        messages: { forbidden: "Aggregate is already deleted" }
+      }
+    });
+    validate(command, {
+      payload: {
+        type: "object",
+        props: {
+          userId: { type: "any" }
+        }
+      }
+    });
 
-  deleteNews: state => {
-    if (!state.createdAt || state.removedAt) {
-      throw new Error("Aggregate is not exist");
-    }
-
-    return {
-      type: "NEWS_DELETED",
-      payload: {}
-    };
-  },
-
-  createComment: (state, { payload: { comment, userId, commentId } }) => {
-    if (!state.createdAt || state.removedAt) {
-      throw new Error("Aggregate is not exist");
-    }
-
-    if (!comment) {
-      throw new Error("Comment text is required");
-    }
-
-    if (!userId) {
-      throw new Error("UserId is required");
-    }
+    const { comment, userId, commentId } = command.payload;
 
     return {
       type: COMMENT_CREATED,
@@ -106,37 +122,11 @@ module.exports = {
     };
   },
 
-  updateComment: (state, { payload: { text, commentId, userId } }) => {
-    if (!state.createdAt || state.removedAt) {
-      throw new Error("Aggregate is not exist");
-    }
-
-    if (state.createdBy !== userId) {
-      throw new Error("Permission denied");
-    }
-
-    if (!text) {
-      throw new Error("Text is required");
-    }
-
-    return {
-      type: "COMMENT_UPDATED",
-      payload: {
-        text,
-        commentId
-      }
-    };
+  updateComment: () => {
+    throw new Error("Not implemented");
   },
 
-  removeComment: (state, { payload: { commentId, userId } }) => {
-    if (!state.createdAt || state.removedAt) {
-      throw new Error("Aggregate is not exist");
-    }
-
-    if (state.createdBy !== userId) {
-      throw new Error("Permission denied");
-    }
-
-    return { type: "COMMENT_REMOVED", payload: { commentId } };
+  removeComment: () => {
+    throw new Error("Not implemented");
   }
 };

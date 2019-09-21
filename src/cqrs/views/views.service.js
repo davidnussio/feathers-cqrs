@@ -11,10 +11,12 @@ const logger = require("../../logger");
 // const newsUpperCaseViewModel = require("./newsStats");
 
 module.exports = function(app) {
+  // TODO: This job will be done by a fs scanning (autodiscovery)
   const viewModels = ["news", "newsStats", "newsList"].map(file => {
     return require(`./${file}`);
   });
-  // [newsViewModel, newsUpperCaseViewModel];
+
+  app.set("cqrs:internals:viewModels", viewModels);
 
   viewModels.forEach(({ name, route, projection: createProjection }) => {
     logger.info(`Configure view model: ${name}`);

@@ -10,6 +10,8 @@ module.exports = function(app) {
 
   const aggregates = [newsAggregate];
 
+  app.set("cqrs:internals:aggregates", aggregates);
+
   aggregates.forEach(({ name, projection }) => {
     logger.info(`Configure readModel: ${name}`);
     app.set(`readModel/${name}`, projection);
@@ -17,8 +19,6 @@ module.exports = function(app) {
 
   const options = {
     eventStore
-    // execute
-    // eventStore
   };
 
   // Initialize our service with any options it requires

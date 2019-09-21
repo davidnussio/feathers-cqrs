@@ -32,7 +32,8 @@ app.use("/", express.static(app.get("public")));
 
 // Set up Plugins and providers
 app.configure(express.rest());
-app.configure(socketio());
+app.configure(socketio({ path: `${app.get("basePath")}/socket.io` }));
+// app.configure(socketio());
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);

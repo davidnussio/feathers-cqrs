@@ -61,9 +61,9 @@ function generateNews(env) {
           aggregateName,
           type: "createNews",
           payload: {
-            title: faker.random.words(2),
+            title: faker.lorem.sentence(),
             userId: uuid().toString(),
-            text: faker.random.words(25)
+            text: faker.lorem.paragraph()
           }
         })
         .catch(console.error);
@@ -115,7 +115,11 @@ function findReadModel(env) {
 
 commander
   .version("0.0.1")
-  .option("-u, --url <url>", "command handler url", "http://localhost:3030");
+  .option(
+    "-u, --url <url>",
+    "command handler url",
+    "http://localhost:3030/api"
+  );
 
 commander.command("generate").action(generateNews);
 commander.command("readModel").action(findReadModel);

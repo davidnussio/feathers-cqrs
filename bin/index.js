@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console */
+
 const commander = require("commander");
 const inquirer = require("inquirer");
 // eslint-disable-next-line import/no-extraneous-dependencies

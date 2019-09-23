@@ -17,7 +17,6 @@ module.exports = function(app) {
   const publishEvent = context => async event => {
     logger.info("Send event type", event.type);
     await context.emit(event.type, event);
-    logger.info("Event info");
   };
 
   const eventStore = createEventStore({

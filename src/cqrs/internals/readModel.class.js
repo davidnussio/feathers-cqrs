@@ -23,21 +23,30 @@ exports.ReadModelView = class ReadModelView {
     this.eventStore = options.eventStore;
   }
 
-  async find(params) {
+  async get(aggregateId, params) {
     const hrstart = process.hrtime();
     const {
-      route: { readModel, aggregateId }
+      query: { readModel, payload = false, startTime, finishTime }
     } = params;
 
+    logger.info(aggregateId, params);
+
     logger.info(
-      `Materialize aggregate ${readModel} with aggregateId ${aggregateId}`
+      `Load event history for aggregate '${readModel}' with aggregateId '${aggregateId}'`
+    );
+
+    logger.info(
+      `Options: payload=%s, startTime=%s, finishTime=%s`,
+      payload,
+      startTime,
+      finishTime
     );
 
     const eventFilter = {
       // eventTypes: ["news/created"] // Or null to load ALL event types
-      aggregateIds: [aggregateId] // Or null to load ALL aggregate ids
-      // startTime: Date.now() - 10000, // Or null to load events from beginning of time
-      // finishTime: Date.now() + 10000 // Or null to load events to current time
+      aggregateIds: [aggregateId], // Or null to load ALL aggregate ids
+      startTime, // Or null to load events from beginning of time
+      finishTime // Or null to load events to current time
     };
 
     const projection = this.app.get(`readModel/${readModel}`);

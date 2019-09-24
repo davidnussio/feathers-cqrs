@@ -17,12 +17,12 @@ function castQueryParam(name, converter) {
 module.exports = {
   before: {
     all: [],
-    find: [
+    find: [],
+    get: [
       castQueryParam("payload", Boolean),
       castQueryParam("startTime", Number),
       castQueryParam("finishTime", Number)
     ],
-    get: [],
     create: [disallow("external")],
     update: [disallow("external")],
     patch: [disallow("external")],

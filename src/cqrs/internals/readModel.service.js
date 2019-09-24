@@ -27,13 +27,12 @@ module.exports = function(app) {
   // Get our initialized service so that we can register hooks
   const service = app.service("read-model");
 
-  app.use("/read-model/:readModel/:aggregateId", app.service("read-model"));
+  app.use("/read-model/:readModel", app.service("read-model"));
 
-  app.service("/read-model/:readModel/:aggregateId").hooks({
+  app.service("/read-model/:readModel").hooks({
     before: {
       get(context) {
         context.params.query.readModel = context.params.route.readModel;
-        context.params.query.aggregateId = context.params.route.aggregateId;
       }
     }
   });

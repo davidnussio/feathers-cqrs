@@ -25,13 +25,12 @@ module.exports = function(app) {
 
   const service = app.service("history");
 
-  app.use("/history/:readModel/:aggregateId", service);
+  app.use("/history/:readModel", service);
 
-  app.service("/history/:readModel/:aggregateId").hooks({
+  app.service("/history/:readModel").hooks({
     before: {
       get(context) {
         context.params.query.readModel = context.params.route.readModel;
-        context.params.query.aggregateId = context.params.route.aggregateId;
       }
     }
   });

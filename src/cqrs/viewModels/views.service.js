@@ -27,6 +27,8 @@ module.exports = function(app) {
       Model,
       paginate
     };
+
+    // TODO: Better if start with /view-model/{route}
     app.use(route, new Views(options, app));
     const service = app.service(name);
 

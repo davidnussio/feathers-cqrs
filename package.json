@@ -47,6 +47,7 @@
     "inquirer": "^7.0.0",
     "nedb": "^1.8.0",
     "pino": "^5.13.3",
+    "pino-pretty": "^3.2.1",
     "resolve-command": "^0.20.25",
     "resolve-es": "^0.20.25",
     "resolve-storage-lite": "^0.20.25",

@@ -12,12 +12,22 @@ function castQueryParam(name, converter) {
   };
 }
 
-// payload, startTime, finishTime
+function routeToQuery(name) {
+  return async context => {
+    const { query = {}, route = {} } = context.params;
+
+    if (route[name] && !query[name]) {
+      query[name] = route[name];
+    }
+  };
+}
 
 module.exports = {
   before: {
     all: [],
     find: [
+      routeToQuery("readModel"),
+      routeToQuery("aggregateId"),
       castQueryParam("payload", Boolean),
       castQueryParam("startTime", Number),
       castQueryParam("finishTime", Number)

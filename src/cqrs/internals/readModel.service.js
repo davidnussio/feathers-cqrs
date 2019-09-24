@@ -29,18 +29,18 @@ module.exports = function(app) {
 
   app.use("/read-model/:readModel/:aggregateId", app.service("read-model"));
 
-  app.service("/read-model/:readModel/:aggregateId").hooks({
-    before: {
-      get(context) {
-        context.params.query.readModel = context.params.route.readModel;
-        context.params.query.aggregateId = context.params.route.aggregateId;
-      },
-      find(context) {
-        context.params.query.readModel = context.params.route.readModel;
-        context.params.query.aggregateId = context.params.route.aggregateId;
-      }
-    }
-  });
+  // app.service("/read-model/:readModel/:aggregateId").hooks({
+  //   before: {
+  //     get(context) {
+  //       context.params.query.readModel = context.params.route.readModel;
+  //       context.params.query.aggregateId = context.params.route.aggregateId;
+  //     },
+  //     find(context) {
+  //       context.params.query.readModel = context.params.route.readModel;
+  //       context.params.query.aggregateId = context.params.route.aggregateId;
+  //     }
+  //   }
+  // });
 
   service.hooks(hooks);
 };

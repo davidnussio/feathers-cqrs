@@ -27,13 +27,5 @@ module.exports = function(app) {
 
   app.use("/history/:readModel", service);
 
-  app.service("/history/:readModel").hooks({
-    before: {
-      get(context) {
-        context.params.query.readModel = context.params.route.readModel;
-      }
-    }
-  });
-
   service.hooks(hooks);
 };

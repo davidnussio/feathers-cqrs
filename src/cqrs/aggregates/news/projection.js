@@ -2,12 +2,9 @@ const { CREATED, DELETED, UPVOTED, COMMENT_CREATED } = require("./event_types");
 
 module.exports = {
   Init: () => ({}),
-  [CREATED]: (state, { payload: { userId } }) => ({
+  [CREATED]: (state, { payload }) => ({
     ...state,
-    createdAt: Date.now(),
-    createdBy: userId,
-    voted: [],
-    comments: {}
+    ...payload
   }),
 
   [UPVOTED]: (state, { payload: { userId } }) => ({

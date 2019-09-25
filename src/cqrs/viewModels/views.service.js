@@ -12,7 +12,7 @@ const logger = require("../../logger");
 
 module.exports = function(app) {
   // TODO: This job will be done by a fs scanning (autodiscovery)
-  const viewModels = ["news", "newsStats", "newsList"].map(file => {
+  const viewModels = ["newsStats", "newsList"].map(file => {
     return require(`./${file}`);
   });
 

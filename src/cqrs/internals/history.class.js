@@ -29,11 +29,11 @@ exports.History = class History {
     this.eventStore = options.eventStore;
   }
 
-  async get(aggregateId, params) {
+  async find(params) {
     // console.log(params);
     const hrstart = process.hrtime();
     const {
-      query: { readModel, payload = false, startTime, finishTime }
+      query: { readModel, aggregateId, payload = false, startTime, finishTime }
     } = params;
 
     logger.info(

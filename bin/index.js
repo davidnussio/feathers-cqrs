@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 
 const commander = require("commander");
@@ -8,6 +9,12 @@ const inquirer = require("inquirer");
 const axios = require("axios");
 const uuid = require("uuid/v4");
 const faker = require("faker");
+
+async function delay(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 
 function executeVotedUp(url, aggregateId, aggregateName, userId) {
   return axios.post(url, {
@@ -41,19 +48,13 @@ function generateNews(env) {
     .prompt([
       {
         type: "number",
-        name: "votedUp",
-        message: "How many voted up?",
-        default: 1
-      },
-      {
-        type: "number",
-        name: "comments",
-        message: "How many comments?",
-        default: 1
+        name: "nEvents",
+        message: "How many events?",
+        default: 10
       }
     ])
     .then(async answers => {
-      const { votedUp, comments } = answers;
+      const { nEvents } = answers;
       const aggregateId = uuid().toString();
       const aggregateName = "news";
       console.log("Aggregate id %s", aggregateId);
@@ -69,19 +70,22 @@ function generateNews(env) {
           }
         })
         .catch(console.error);
-      for (let i = 0; i < votedUp; i++) {
-        const userId = uuid().toString();
-        // eslint-disable-next-line no-await-in-loop
-        await executeVotedUp(url, aggregateId, aggregateName, userId).catch(
-          console.error
-        );
-      }
-      for (let i = 0; i < comments; i++) {
-        const userId = uuid().toString();
-        // eslint-disable-next-line no-await-in-loop
-        await executeComment(url, aggregateId, aggregateName, userId).catch(
-          console.error
-        );
+
+      for (let e = 0; e < nEvents; e++) {
+        for (let i = 0; i < Math.random() * 20; i++) {
+          const userId = uuid().toString();
+          await executeVotedUp(url, aggregateId, aggregateName, userId).catch(
+            console.error
+          );
+          await delay(1000);
+        }
+        for (let i = 0; i < Math.random() * 20; i++) {
+          const userId = uuid().toString();
+          await executeComment(url, aggregateId, aggregateName, userId).catch(
+            console.error
+          );
+          await delay(1000);
+        }
       }
     });
 }

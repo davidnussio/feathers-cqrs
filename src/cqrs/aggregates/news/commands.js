@@ -19,12 +19,13 @@ module.exports = {
     return {
       type: CREATED,
       payload: {
-        __metadata: { version: "1.4.2-mafia" }, // TODO metadata idea
         title,
         text,
         link,
         userId,
-        voted
+        voted,
+        createdAt: Date.now(),
+        createdBy: userId
       }
     };
   },

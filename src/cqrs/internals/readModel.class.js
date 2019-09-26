@@ -4,15 +4,16 @@ async function run(eventStore, eventFilter, projection) {
   let eventCount = 0;
   let state = projection.Init();
 
-  const eventHandler = async event => {
+  const eventHandler = event => {
     logger.debug("→ event", event);
-    state = await projection[event.type](state, event);
+    state = projection[event.type](state, event);
     eventCount++;
   };
 
   await eventStore.loadEvents(eventFilter, eventHandler);
 
-  logger.info("Loaded %d", eventCount);
+  logger.info("Loaded %d events", eventCount);
+
   return state;
 }
 

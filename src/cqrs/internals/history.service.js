@@ -25,7 +25,7 @@ module.exports = function(app) {
 
   const service = app.service("history");
 
-  app.use("/history/:readModel", service);
+  app.use("/history/:readModel/:aggregateId", service);
 
   service.hooks(hooks);
 };

@@ -1,5 +1,6 @@
 const commandHandler = require("resolve-command").default;
 const createEsStorage = require("resolve-storage-lite").default;
+// const createSnapshotAdapter = require("resolve-snapshot-lite").default;
 const createEventStore = require("resolve-es").default;
 
 const logger = require("../logger");
@@ -22,9 +23,16 @@ module.exports = function(app) {
     storage: createEsStorage({ databaseFile: "./data/event-store.sqlite" }),
     publishEvent: publishEvent(app)
   });
+
+  // const snapshotAdapter = createSnapshotAdapter({
+  //   databaseFile: "./data/aggregates-snapshot.sqlite",
+  //   bucketSize: 100
+  // });
+
   const execute = commandHandler({
     eventStore,
     aggregates
+    // snapshotAdapter
   });
 
   app.set("eventStore", eventStore);

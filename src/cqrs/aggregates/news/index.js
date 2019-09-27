@@ -6,5 +6,8 @@ module.exports = {
   name: "news",
   projection,
   commands,
-  eventTypes
+  eventTypes,
+  invariantHash: null,
+  serializeState: state => JSON.stringify(state),
+  deserializeState: serializedState => JSON.parse(serializedState)
 };

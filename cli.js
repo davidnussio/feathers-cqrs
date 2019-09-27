@@ -54,14 +54,13 @@ async function generateNewsAggregate(url, nEvents, delayMs) {
     .catch(console.error);
 
   for (let e = 0; e < nEvents; e++) {
-    for (let i = 0; i < Math.random() * 20; i++) {
+    if (Math.random() < 0.6) {
       const userId = uuid().toString();
       await executeVotedUp(url, aggregateId, aggregateName, userId).catch(
         console.error
       );
       await delay(delayMs);
-    }
-    for (let i = 0; i < Math.random() * 20; i++) {
+    } else {
       const userId = uuid().toString();
       await executeComment(url, aggregateId, aggregateName, userId).catch(
         console.error
@@ -82,7 +81,8 @@ vorpal
       {
         type: "input",
         name: "nEvents",
-        message: "How many iteration do you want? "
+        message: "How many iteration do you want? ",
+        default: 20
       },
       async result => {
         const url = `${args.options.url}/command-handler`;

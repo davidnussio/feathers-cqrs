@@ -1,5 +1,7 @@
 const Validator = require("fastest-validator");
 
+const logger = require("../../logger");
+
 class ValidationError extends Error {
   constructor(message, cause) {
     super(message);
@@ -16,6 +18,8 @@ module.exports = function validate(object, schema) {
   if (result === true) {
     return true;
   }
+
+  logger.error(object);
 
   throw new ValidationError("Aggregate validation error", result);
 };

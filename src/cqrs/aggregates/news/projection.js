@@ -1,4 +1,11 @@
-const { CREATED, DELETED, UPVOTED, COMMENT_CREATED } = require("./event_types");
+const {
+  CREATED,
+  DELETED,
+  UPVOTED,
+  UNVOTED,
+  COMMENT_CREATED,
+  COMMENT_REMOVED
+} = require("./event_types");
 
 module.exports = {
   Init: () => ({}),
@@ -10,6 +17,11 @@ module.exports = {
   [UPVOTED]: (state, { payload: { userId } }) => ({
     ...state,
     voted: [...state.voted, userId]
+  }),
+
+  [UNVOTED]: (state, { payload: { userId } }) => ({
+    ...state,
+    voted: [...state.voted.filter(votedUserId => votedUserId !== userId)]
   }),
 
   [COMMENT_CREATED]: (
@@ -26,6 +38,14 @@ module.exports = {
       }
     }
   }),
+
+  [COMMENT_REMOVED]: (state, { payload: { commentId } }) => {
+    const { [commentId]: _, ...comments } = state.comments;
+    return {
+      ...state,
+      comments
+    };
+  },
 
   [DELETED]: (state, { payload }) => ({
     ...state,

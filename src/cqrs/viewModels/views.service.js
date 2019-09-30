@@ -12,7 +12,7 @@ const logger = require("../../logger");
 
 module.exports = function(app) {
   // TODO: This job will be done by a fs scanning (autodiscovery)
-  const viewModels = ["newsStats", "newsList"].map(file => {
+  const viewModels = ["newsStats", "newsList", "comments"].map(file => {
     return require(`./${file}`);
   });
 
@@ -34,7 +34,7 @@ module.exports = function(app) {
 
     service.hooks(hooks);
 
-    const projection = createProjection(service);
+    const projection = createProjection(app);
 
     Object.keys(projection).forEach(eventName => {
       app.on(eventName, projection[eventName]);

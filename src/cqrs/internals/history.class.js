@@ -22,11 +22,54 @@ async function run(eventStore, eventFilter, withPayload) {
   return state;
 }
 
+async function regenerateViewModel(eventStore, eventFilter, projections) {
+  let eventCount = 0;
+
+  const eventHandler = async event => {
+    logger.info("→ event", event);
+    const handler = projections[event.type];
+    if (typeof handler === "function") {
+      await handler(event);
+    }
+    eventCount++;
+  };
+
+  await eventStore.loadEvents(eventFilter, eventHandler);
+
+  logger.info("Loaded %d", eventCount);
+  return eventCount;
+}
+
 exports.History = class History {
   constructor(options, app) {
     this.options = options || {};
     this.app = app;
     this.eventStore = options.eventStore;
+  }
+
+  async create(object, params) {
+    console.log(params.query);
+    const { viewModels = [] } = params.query;
+
+    const viewModelServices = this.app
+      .get("cqrs:internals:viewModels")
+      .filter(v => viewModels.includes(v.name));
+
+    const result = Promise.all(
+      viewModelServices.map(viewModelService => {
+        const projection = viewModelService.projection(this.app);
+        const eventTypes = Object.keys(projection).map(eventType => eventType);
+        const eventFilter = {
+          eventTypes
+          // aggregateIds: [aggregateId], // Or null to load ALL aggregate ids
+          // startTime, // Or null to load events from beginning of time
+          // finishTime // Or null to load events to current time
+        };
+        return regenerateViewModel(this.eventStore, eventFilter, projection);
+      })
+    );
+
+    return result;
   }
 
   async find(params) {

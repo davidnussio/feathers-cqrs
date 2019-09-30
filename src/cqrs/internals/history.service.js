@@ -27,5 +27,5 @@ module.exports = function(app) {
 
   app.use("/history/:readModel/:aggregateId", service);
 
-  service.hooks(hooks);
+  service.hooks({ ...hooks, before: { ...hooks.before, create: [] } });
 };

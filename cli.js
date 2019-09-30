@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-return-assign */
 /* eslint-disable no-await-in-loop */
 const vorpal = require("vorpal")();
 
@@ -5,6 +7,14 @@ const vorpal = require("vorpal")();
 const axios = require("axios");
 const uuid = require("uuid/v4");
 const faker = require("faker");
+
+function chooseWeighted(items, chances) {
+  const sum = chances.reduce((acc, el) => acc + el, 0);
+  let acc = 0;
+  chances = chances.map(el => (acc = el + acc));
+  const rand = Math.random() * sum;
+  return items[chances.filter(el => el <= rand).length];
+}
 
 async function delay(ms) {
   return new Promise(resolve => {
@@ -88,9 +98,11 @@ async function* generateNewsAggregate(url, nEvents, delayMs) {
   const savedCommnetCommentIds = [];
   for (let e = 0; e < nEvents; e++) {
     try {
-      const command = ["up_voted", "un_voted", "comment", "remove_comment"][
-        Math.floor(Math.random() * 4)
-      ];
+      const commands = ["up_voted", "un_voted", "comment", "remove_comment"];
+      const weights = [70, 10, 15, 5];
+
+      const command = chooseWeighted(commands, weights);
+
       if (command === "up_voted") {
         const userId = uuid().toString();
         savedVotedUserIds.push(userId);
@@ -116,7 +128,7 @@ async function* generateNewsAggregate(url, nEvents, delayMs) {
         });
         await delay(delayMs);
       } else if (command === "remove_comment") {
-        const [commentId] = popElement(savedVotedUserIds);
+        const [commentId] = popElement(savedCommnetCommentIds);
         if (!commentId) {
           e--;
           // eslint-disable-next-line no-continue

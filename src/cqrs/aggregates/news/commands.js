@@ -40,7 +40,7 @@ function deleteNews(state) {
   validate(state, {
     createdAt: {
       type: "any",
-      messages: { required: "Aggregate is not exist" }
+      messages: { required: "Aggregate does not exist" }
     }
   });
   validate(state, {
@@ -62,7 +62,7 @@ function upvoteNews(state, command) {
   validate(state, {
     createdAt: {
       type: "any",
-      messages: { required: "Aggregate is not exist" }
+      messages: { required: "Aggregate does not exist" }
     }
   });
   validate(state, {
@@ -94,7 +94,7 @@ function unvoteNews(state, command) {
   validate(state, {
     createdAt: {
       type: "any",
-      messages: { required: "Aggregate is not exist" }
+      messages: { required: "Aggregate does not exist" }
     }
   });
   validate(state, {
@@ -119,7 +119,7 @@ function unvoteNews(state, command) {
     voted: {
       type: "array",
       contains: userId,
-      messages: { contains: "User id not exits" }
+      messages: { contains: "User does not exit" }
     }
   });
 
@@ -135,7 +135,7 @@ function createComment(state, command) {
   validate(state, {
     createdAt: {
       type: "any",
-      messages: { required: "Aggregate is not exist" }
+      messages: { required: "Aggregate does not exist" }
     }
   });
   validate(state, {
@@ -178,7 +178,7 @@ function removeComment(state, command) {
   validate(state, {
     createdAt: {
       type: "any",
-      messages: { required: "Aggregate is not exist" }
+      messages: { required: "Aggregate does not exist" }
     }
   });
   validate(state, {
@@ -197,6 +197,14 @@ function removeComment(state, command) {
   });
 
   const { commentId } = command.payload;
+
+  validate(state, {
+    comments: {
+      type: "object",
+      props: { [commentId]: { type: "object" } },
+      messages: { [commentId]: "Comment does not exist" }
+    }
+  });
 
   return {
     type: COMMENT_REMOVED,

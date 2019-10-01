@@ -24,14 +24,6 @@ exports.Internals = class Internals {
     this.viewModelsInfo = viewModelsInfo;
   }
 
-  // async get(name) {
-  // const aggregates = this.app.get("cqrs:internals:aggregates");
-  // const aggregate = aggregates.find(a => a.name === name);
-  // const commandNames = Object.keys(aggregate.commands);
-  //
-  // return { commandNames };
-  // }
-
   async find() {
     this.initializeAggregatesInfo();
     this.initializeViewModelsInfo();

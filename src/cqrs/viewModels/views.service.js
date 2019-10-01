@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
 // Initializes the `news` service on path `/news`
-// const fs = require("fs");
+const fs = require("fs");
 const { Views } = require("./views.class");
 const createModel = require("../../models/news.model");
 const hooks = require("./views.hooks");
@@ -12,9 +12,27 @@ const logger = require("../../logger");
 
 module.exports = function(app) {
   // TODO: This job will be done by a fs scanning (autodiscovery)
-  const viewModels = ["newsStats", "newsList", "comments"].map(file => {
-    return require(`./${file}`);
-  });
+  const viewModels = fs
+    .readdirSync(__dirname, { withFileTypes: true })
+    .map(dirent => {
+      if (dirent.isDirectory() === false) {
+        return false;
+      }
+
+      const requiredFile = `${__dirname}/${dirent.name}/index.js`;
+      const err = fs.accessSync(requiredFile, fs.constants.F_OK);
+
+      if (err) {
+        logger.error(`${requiredFile} does not exits`);
+        throw new Error(`${requiredFile} does not exits`);
+      }
+      const requiredViewModel = require(requiredFile);
+      logger.info(
+        `Loaded view model ${requiredViewModel.name} → (route: ${requiredViewModel.route})`
+      );
+      return requiredViewModel;
+    })
+    .filter(vm => vm);
 
   app.set("cqrs:internals:viewModels", viewModels);
 

@@ -150,18 +150,14 @@ function createComment(state, command) {
       props: {
         commentId: { type: "any" },
         comment: { type: "string" },
-        user: {
-          type: "object",
-          props: {
-            userId: { type: "any" },
-            name: { type: "string" }
-          }
-        }
+        userId: { type: "any" }
       }
     }
   });
 
-  const { comment, user, commentId } = command.payload;
+  // logger.warn(command.payload);
+
+  const { comment, userId, commentId } = command.payload;
 
   return {
     type: COMMENT_CREATED,
@@ -169,7 +165,7 @@ function createComment(state, command) {
       commentId,
       comment,
       createdAt: Date.now(),
-      createdBy: user
+      createdBy: userId
     }
   };
 }

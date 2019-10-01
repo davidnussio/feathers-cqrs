@@ -3,14 +3,10 @@ const { History } = require("./history.class");
 const hooks = require("./internals.hooks");
 const logger = require("../../logger");
 
-const newsAggregate = require("../aggregates/news");
-
 module.exports = function(app) {
   const eventStore = app.get("eventStore");
 
-  const aggregates = [newsAggregate];
-
-  app.set("cqrs:internals:aggregates", aggregates);
+  const aggregates = app.get("cqrs:internals:aggregates");
 
   aggregates.forEach(({ name, projection }) => {
     logger.info(`Configure readModel: ${name}`);

@@ -8,6 +8,16 @@ const axios = require("axios");
 const uuid = require("uuid/v4");
 const faker = require("faker");
 
+axios.interceptors.request.use(request => {
+  // console.log("Starting Request", request);
+  return request;
+});
+
+axios.interceptors.response.use(response => {
+  // console.log("Response:", response);
+  return response;
+});
+
 function chooseWeighted(items, chances) {
   const sum = chances.reduce((acc, el) => acc + el, 0);
   let acc = 0;
@@ -50,7 +60,7 @@ function executeUnVoted(url, aggregateId, aggregateName, userId) {
   });
 }
 
-function executeComment(url, aggregateId, aggregateName, commentId, user) {
+function executeComment(url, aggregateId, aggregateName, commentId, userId) {
   return axios.post(url, {
     aggregateId,
     aggregateName,
@@ -58,7 +68,7 @@ function executeComment(url, aggregateId, aggregateName, commentId, user) {
     payload: {
       commentId,
       comment: faker.random.words(25),
-      user
+      userId
     }
   });
 }
@@ -72,6 +82,28 @@ function executeRemoveComment(url, aggregateId, aggregateName, commentId) {
       commentId
     }
   });
+}
+
+function createUser(url, aggregateId, aggregateName) {
+  return axios.post(url, {
+    aggregateId,
+    aggregateName,
+    type: "createUser",
+    payload: {
+      username: faker.internet.userName(),
+      email: faker.internet.email()
+    }
+  });
+}
+
+async function userIdFactory(url, userIds) {
+  if (userIds.length === 0 || Math.floor(Math.random() * 10) < 3) {
+    const userId = uuid().toString();
+    await createUser(url, userId, "user");
+    userIds.push(userId);
+    return userId;
+  }
+  return popElement([...userIds])[0];
 }
 
 async function* generateNewsAggregate(url, nEvents, delayMs) {
@@ -104,8 +136,10 @@ async function* generateNewsAggregate(url, nEvents, delayMs) {
       const command = chooseWeighted(commands, weights);
 
       if (command === "up_voted") {
-        const userId = uuid().toString();
-        savedVotedUserIds.push(userId);
+        const userId = await userIdFactory(url, savedVotedUserIds);
+        if (savedVotedUserIds[savedVotedUserIds.length - 1] === userId) {
+          yield "user_created";
+        }
         await executeUpVoted(url, aggregateId, aggregateName, userId);
         await delay(delayMs);
       } else if (command === "un_voted") {
@@ -118,14 +152,16 @@ async function* generateNewsAggregate(url, nEvents, delayMs) {
         await executeUnVoted(url, aggregateId, aggregateName, userId);
         await delay(delayMs);
       } else if (command === "comment") {
-        const userId = uuid().toString();
+        const userId = await userIdFactory(url, savedVotedUserIds);
         const commentId = uuid().toString();
         savedCommnetCommentIds.push(commentId);
-        const name = faker.name.findName();
-        await executeComment(url, aggregateId, aggregateName, commentId, {
-          userId,
-          name
-        });
+        await executeComment(
+          url,
+          aggregateId,
+          aggregateName,
+          commentId,
+          userId
+        );
         await delay(delayMs);
       } else if (command === "remove_comment") {
         const [commentId] = popElement(savedCommnetCommentIds);
@@ -166,7 +202,8 @@ vorpal
           up_voted: 0,
           un_voted: 0,
           comment: 0,
-          remove_comment: 0
+          remove_comment: 0,
+          user_created: 0
         };
         // eslint-disable-next-line no-restricted-syntax
         for await (const itemName of generateNewsAggregate(
@@ -178,6 +215,7 @@ vorpal
         }
         this.log(
           `Generated ${stats.aggregate} aggregati, 
+          ${stats.user_created} user created, 
           ${stats.up_voted} up voted, 
           ${stats.un_voted} un voted, 
           ${stats.comment} comments, 

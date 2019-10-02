@@ -48,7 +48,6 @@ exports.History = class History {
   }
 
   async create(object, params) {
-    console.log(params.query);
     const { viewModels = [] } = params.query;
 
     const viewModelServices = this.app

@@ -9,12 +9,22 @@ module.exports = {
         aggregateId,
         payload: { commentId, comment, createdBy }
       } = event;
-      const news = await app
-        .service("read-model")
-        .find({ query: { readModel: "news", aggregateId } });
-      return app
-        .service("comments")
-        .create({ commentId, comment, createdBy, newsTitle: news.title });
+
+      const [news, user] = await Promise.all([
+        app
+          .service("read-model")
+          .find({ query: { readModel: "news", aggregateId } }),
+        app
+          .service("read-model")
+          .find({ query: { readModel: "user", aggregateId: createdBy } })
+      ]);
+
+      return app.service("comments").create({
+        commentId,
+        comment,
+        user: { userId: createdBy, ...user },
+        newsTitle: news.title
+      });
     }
   })
 };

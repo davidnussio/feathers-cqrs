@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
+const fs = require("fs");
 const commandHandler = require("resolve-command").default;
 const createEsStorage = require("resolve-storage-lite").default;
 // const createSnapshotAdapter = require("resolve-snapshot-lite").default;
@@ -18,6 +19,30 @@ module.exports = function(app) {
   });
 
   app.set("cqrs:internals:aggregates", aggregates);
+
+  const viewModels = fs
+    .readdirSync(`${__dirname}/viewModels`, { withFileTypes: true })
+    .map(dirent => {
+      if (dirent.isDirectory() === false) {
+        return false;
+      }
+
+      const requiredFile = `${__dirname}/viewModels/${dirent.name}/index.js`;
+      const err = fs.accessSync(requiredFile, fs.constants.F_OK);
+
+      if (err) {
+        logger.error(`${requiredFile} does not exits`);
+        throw new Error(`${requiredFile} does not exits`);
+      }
+      const requiredViewModel = require(requiredFile);
+      logger.info(
+        `Loaded view model ${requiredViewModel.name} → (route: ${requiredViewModel.route})`
+      );
+      return requiredViewModel;
+    })
+    .filter(vm => vm);
+
+  app.set("cqrs:internals:viewModels", viewModels);
 
   const publishEvent = context => async event => {
     logger.info("Send event type", event.type);
@@ -44,6 +69,6 @@ module.exports = function(app) {
   app.set("executeCommand", execute);
 
   app.configure(commandHandlerService);
-  app.configure(viewsService);
   app.configure(internalServices);
+  app.configure(viewsService);
 };

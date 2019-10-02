@@ -55,6 +55,8 @@ exports.History = class History {
       .get("cqrs:internals:viewModels")
       .filter(v => viewModels.includes(v.name));
 
+    logger.info("quit", viewModelServices);
+
     const result = Promise.all(
       viewModelServices.map(viewModelService => {
         const projection = viewModelService.projection(this.app);
